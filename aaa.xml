@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- xml提示：禁止添加任何@或者#的字符 -->
+<student>
+  <UserId txt_s ="用户的Id">01</UserId>
+  <Name txt_s ="用户的姓名">张三</Name>
+ 
+</student>
