@@ -1,35 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <title></title>
-  <style type="text/css">
-    body {
-      background-color: #D3C7C7;
-    }
-
-    div {
-      width: 300px;
-      height: 350px;
-      margin: 100px auto;
-    }
-
-    img {
-      cursor: pointer;
-      width: 300px;
-      height: 300px;
-      transition: all 1s ease-out 0s;
-    }
-
-    img:hover {
-      transition: all 1s ease-out 0s;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.2/js/swiper.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.2/css/swiper.min.css">
+  <title>Document</title>
 </head>
 
 <body>
-  <div><img id="img" src="1 (3)/p1.jpg" />
-  </div>
+
+  <h3>[js] 第1天 用递归算法实现，数组长度为5且元素的随机数在2-32间不重复的值</h3>
+  <script>
+    var arr = new Array(5)
+    function insertRandom(n) {
+      if (n < 0) return
+      let tmp = Math.floor(Math.random() * 31 + 2)
+      if (arr.indexOf(tmp) !== -1) return insertRandom(n)
+      arr[n] = tmp
+      return insertRandom(n - 1)
+    }
+    insertRandom(arr.length - 1)
+    console.log(arr)
+
+    // var arr = new Array(5);
+    // var num = randomNumber();
+    // var i = 0;
+    // randomArr(arr, num);
+    // function randomArr(arr, num) {
+    //   if (arr.indexOf(num) < 0) {
+    //     arr[i] = num;
+    //     i++;
+    //   } else {
+    //     num = randomNumber();
+    //   }
+    //   if (i >= arr.length) {
+    //     console.log(arr);
+    //     return;
+    //   } else {
+    //     randomArr(arr, num)
+    //   }
+    // }
+    // function randomNumber() {
+    //   return Math.floor(Math.random() * 31 + 2)
+    // }
+  </script>
 </body>
 
 </html>
