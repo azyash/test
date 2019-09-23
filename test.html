@@ -24,20 +24,55 @@
 </head>
 
 <body>
-  <h3>[html] iframe框架都有哪些优缺点？</h3>
+  <h3>[html] 页面导入样式时，使用link和@import有什么区别？</h3>
   <div class="html">
-
+    1）从属关系的区别：link属于XHTML标签，而@import是CSS提供的语法规则，link除了加载CSS，还可以定义RSS，定义rel连接属性等，@import就只能加载CSS。<br>
+    2）加载顺序的区别：页面加载时，link会同时被加载，而@import引用的CSS会等页面被加载完后再加载。<br>
+    3）兼容性的区别：@import只有IE5以上才能被识别，而link是XHTML标签，无兼容问题。<br>
+    4）DOM可控性区别：通过js操作DOM,可以插入link标签来改变样式；由于DOM方法是基于文档的，无法使用@import方式插入样式
   </div>
-  <h3>[css] 简述你对BFC规范的理解</h3>
-  <div class="css"></div>
-  <h3>[js] 统计某一字符或字符串在另一个字符串中出现的次数</h3>
+  <h3>[css] 圣杯布局和双飞翼布局的理解和区别，并用代码实现</h3>
+  <div class="css">
+     
+     作用：圣杯布局和双飞翼布局解决的问题是一样的，就是两边顶宽，中间自适应的三栏布局，中间栏要在放在文档流前面以优先渲染。
+    <br><br>
+    区别：圣杯布局，为了中间div内容不被遮挡，将中间div设置了左右padding-left和padding-right后，将左右两个div用相对布局position:relative并分别配合right和left属性，以便左右两栏div移动后不遮挡中间div。双飞翼布局，为了中间div内容不被遮挡，直接在中间div内部创建子div用于放置内容，在该子div里用margin-left和margin-right为左右两栏div留出位置。
+  </div>
+  <h3>[js] 第1天 用递归算法实现，数组长度为5且元素的随机数在2-32间不重复的值</h3>
   <script>
-    function substrCount(str, target) {
-      if (Object.prototype.toString.call(str).slice(8, -1) === 'String' && !str)
-        alert("请填写字符串")
-      else
-        return (str.match(new RegExp(target, 'g')).length)
+    var arr = new Array(5)
+    function insertRandom(n) {
+      if (n < 0) return
+      let tmp = Math.floor(Math.random() * 31 + 2)
+      if (arr.indexOf(tmp) !== -1) return insertRandom(n)
+      arr[n] = tmp
+      return insertRandom(n - 1)
     }
+    insertRandom(arr.length - 1)
+    console.log(arr)
+
+
+    // var arr = new Array(5);
+    // var num = randomNumber();
+    // var i = 0;
+    // randomArr(arr, num);
+    // function randomArr(arr, num) {
+    //   if (arr.indexOf(num) < 0) {
+    //     arr[i] = num;
+    //     i++;
+    //   } else {
+    //     num = randomNumber();
+    //   }
+    //   if (i >= arr.length) {
+    //     console.log(arr);
+    //     return;
+    //   } else {
+    //     randomArr(arr, num)
+    //   }
+    // }
+    // function randomNumber() {
+    //   return Math.floor(Math.random() * 31 + 2)
+    // }
   </script>
 </body>
 
