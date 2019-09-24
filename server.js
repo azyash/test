@@ -1,7 +1,25 @@
-const http = require('http');
-http.createServer('request', function (request, response) {
-  response.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' });
-  response.end('Hello World');
-}).listen(3000, 'localhost', function () {
-  console.log('Server running at http://127.0.0.1:3000/');
-})
+var http = require('http');
+var fs = require('fs');//引入文件读取模块
+var documentRoot = './';
+//需要访问的文件的存放目录
+var server = http.createServer(function (req, res) {
+  var url = req.url;
+  var file = documentRoot + url;
+  console.log(url);
+  fs.readFile(file, function (err, data) {
+    if (err) {
+      res.writeHeader(404, {
+        'content-type': 'text/html;charset="utf-8"'
+      });
+      res.write('<h1>404错误</h1><p>你要找的页面不存在</p>');
+      res.end();
+    } else {
+      res.writeHeader(200, {
+        'content-type': 'text/html;charset="utf-8"'
+      });
+      res.write(data);
+      res.end();
+    }
+  });
+}).listen(8888);
+console.log('服务器开启成功:http://localhost:8888');
