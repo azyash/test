@@ -1,29 +1,143 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
+  <script type="text/javascript" src="jquery-2.1.4.js"></script>
 </head>
 
 <body>
+  <audio id="audio" src="audios/李荣浩 - 笑忘书(live).mp3" controls="controls"></audio>
+  <p>剩余播放时间：<span id="showTime"></span><span id="showDragTime"></span></p>
+  <div id="timeBar" style="height:5px; width:300px; border:1px solid red; margin-bottom:20px; margin-top:20px;">
+    <div id="showTimeBar" style="height:5px; width:0%; background:black;"></div>
+  </div>
+  <button id="beforeBtn">上一首</button>
+  <button id="playOrstopBtn">播放</button>
+  <button id="stopBtn">停止</button>
+  <button id="nextBtn">下一首</button>
+
   <script>
-    var ar =
-      [
-        {
-          "id": 10571,
-          "name": "郑秀文",
-          "tns": [
+    function controlOfAudio() {
+      var tempAudio = document.getElementById('audio');
+      var songOfBeforeSrc = "";
+      var songOfNext = function () {
+        var randSongID = parseInt(Math.random() * 5 + 1);
+        var transRandSongID = "";
+        songOfBeforeSrc = tempAudio.src;
+        $.ajax({
+          url: 'php/getSongSrc.php',
+          type: 'post',
+          data: { transRandSongID: randSongID },
+          dataType: 'json',
+          success: function (data) {
+            tempAudio.src = data[0].songSrc;
+            tempAudio.play();
+          }
+        });
+      }//避免setInterval的二级作用域，将其设置为私有函数
 
-          ],
-          "alias": [
+      this.ifPaused = function () {
+        if (tempAudio.paused)
+          return true;
+        else
+          return false;
+      }//判断播放器状态。播放或者暂停
 
-          ]
-        }
-      ]
-    console.log(ar)
+      this.showTimeAndAutoNextSong = function () {
+        setInterval(function () {
+          var tempLeftMin = parseInt((tempAudio.duration - tempAudio.currentTime) / 60);
+          var tempLeftSec = parseInt((tempAudio.duration - tempAudio.currentTime) % 60);
+          var timeBarPercent = tempAudio.currentTime / tempAudio.duration * 100;
+          //$("#showTest").text(timeBarPercent);
+          $("#showTimeBar").css("width", timeBarPercent + "%");//按百分比调整的进度条
+          if (tempLeftSec < 10)
+            tempLeftSec = "0" + tempLeftSec;//将时间格式显示为12：12样式
+          if (tempLeftMin < 10)
+            tempLeftMin = "0" + tempLeftMin;//将时间格式显示为12：12样式
+          $("#showTime").text(tempLeftMin + ":" + tempLeftSec);
+          if (tempAudio.duration == tempAudio.currentTime)
+            songOfNext();
+        }, 1000);
+      }//显示剩余时间，duration没起作用的都是比对的时候歌曲还未开始加载，等到歌曲开始加载的时候，函数体早就已经加载完，就导致一开始设置的
+      //比如var sumTime=tempAudio.duration;并不起作用，个人观点，欢迎探讨
+
+      this.makeSongOfNext = function () {
+        songOfNext();
+      }
+
+      this.makeSongOfBefore = function () {
+        tempAudio.src = songOfBeforeSrc;
+        tempAudio.play();
+      }
+
+      this.makeTimeBarDrag = function () {
+
+      }
+
+      this.makeItPlay = function () {
+        tempAudio.play();
+      }
+      this.makeItPause = function () {
+        tempAudio.pause();
+      }
+      this.makeItStop = function () {
+        tempAudio.pause();
+        tempAudio.currentTime = 0.0;
+      }
+    }
+
+    var audio = new controlOfAudio();
+    audio.showTimeAndAutoNextSong();
+    //audio.saytest();
+    $("#playOrstopBtn").click(function () {
+      if (audio.ifPaused()) {
+        audio.makeItPlay();
+        $("#playOrstopBtn").text("暂停");
+      }
+      else {
+        audio.makeItPause();
+        $("#playOrstopBtn").text("播放");
+      }
+    });
+
+    $("#stopBtn").click(function () {
+      audio.makeItStop();
+    });
+    $("#nextBtn").click(function () {
+      audio.makeSongOfNext();
+    });
+    $("#beforeBtn").click(function () {
+      audio.makeSongOfBefore();
+    });
+
+
+    $("#timeBar").click(function (event) {
+      var e = event || window.event;
+      var obj = document.getElementById("timeBar");
+      var schedulePercent = (e.clientX - obj.getBoundingClientRect().left) / obj.offsetWidth;
+
+      var tempAudio = document.getElementById('audio');
+      tempAudio.currentTime = schedulePercent * tempAudio.duration;
+    });//进度条拖动
+
+    $("#timeBar").mousemove(function (event) {
+      var e = event || window.event;
+      var obj = document.getElementById("timeBar");
+      var schedulePercent = (e.clientX - obj.getBoundingClientRect().left) / obj.offsetWidth;
+
+      var tempAudio = document.getElementById('audio');
+      var showMin = parseInt(schedulePercent * tempAudio.duration / 60);
+      var showSec = parseInt(schedulePercent * tempAudio.duration % 60);
+      if (showMin < 10)
+        showMin = "0" + showMin;//将时间格式显示为12：12样式
+      if (showSec < 10)
+        showSec = "0" + showSec;//将时间格式显示为12：12样式
+      $("#showDragTime").text("|跳转至" + showMin + ":" + showSec);
+    });//拖动进度显示
+
+    $("#timeBar").mouseout(function () {
+      $("#showDragTime").text(" ");
+    });//隐藏拖动进度
   </script>
 </body>
 
